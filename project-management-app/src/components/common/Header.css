@@ -21,7 +21,8 @@
 
 .nav {
   display: flex;
-  gap: 2rem;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .nav-link {
@@ -35,4 +36,22 @@
 .nav-link:hover,
 .nav-link.active {
   background-color: #34495e;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.btn-secondary {
+  background-color: #7f8c8d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
 }

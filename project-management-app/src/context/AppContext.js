@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 const AppContext = createContext();
 
 const initialState = {
+  isAuthenticated: false,
+  user: null,
   projects: [
     {
       id: '1',
@@ -49,6 +51,20 @@ const initialState = {
 
 function appReducer(state, action) {
   switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        isAuthenticated: true,
+        // In a real app, you'd set the user from the action payload
+        user: { name: 'Demo User' },
+      };
+
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      };
     case 'ADD_PROJECT':
       const newProject = {
         id: uuidv4(),
