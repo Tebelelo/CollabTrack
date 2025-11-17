@@ -15,7 +15,7 @@ function Header() {
   return (
     <header className="header">
       <div className="header-container">
-        <h1 className="logo">ProjectTracker</h1>
+        <h1 className="logo">CollabTrack</h1>
         {state.isAuthenticated && (
           <nav className="nav">
             <NavLink to="/" className="nav-link" end>
