@@ -1,7 +1,7 @@
 //Admin – can create projects, manage users, and view all data
 import { supabase } from "../config/database.js";
 
-//Add a new user
+//Add a new member
 export const addmember = async (
     project_id,
     user_id,

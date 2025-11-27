@@ -59,7 +59,7 @@ export const getUser = async (req, res) => {
 // Update user
 export const updateUserProfile = async (req, res) => {
   try {
-    // The model function expects an object with the fields to update
+    
     const user = await updateUser(req.params.id, req.body);
     if (!user)
       return res.status(404).json({ message: "User not found" });
@@ -74,8 +74,6 @@ export const updateUserProfile = async (req, res) => {
 export const removeUser = async (req, res) => {
   try {
     const user = await deleteUser(req.params.id);
-    // deleteUser in supabase v2 might not return the deleted row by default.
-    // A success response is often enough.
     res
       .status(200)
       .json({ message: "User deleted successfully" });

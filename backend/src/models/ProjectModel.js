@@ -1,7 +1,7 @@
 //Admin – can create projects, manage users, and view all data
 import { supabase } from "../config/database.js";
 
-//Add a new user
+//Add a new project
 export const createProject = async (
     title,
     description,
@@ -11,7 +11,7 @@ export const createProject = async (
 ) => {
   try {
     const { data, error } = await supabase
-      .from("projects") // Corrected table name from "users" to "projects"
+      .from("projects") 
       .insert({
         title,
         description,
@@ -30,7 +30,7 @@ export const createProject = async (
   }
 };
 
-//Get all users
+//Get all projects
 export const getProjects = async () => {
   try {
     const { data, error } = await supabase
@@ -46,7 +46,7 @@ export const getProjects = async () => {
   }
 };
 
-//Get user by ID
+//Get project by title
 export const getProjectByTitle = async (title) => {
   try {
     const { data, error } = await supabase
