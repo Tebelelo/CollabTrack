@@ -4,7 +4,7 @@ import auth from '../auth/authmiddleware.js';
 import { permit } from '../auth/roles.js';
 import { supabase } from '../config/database.js';
 import * as projectController from '../controllers/projectController.js';
-import * as projectModel from '../models/projectModel.js';
+//import * as projectModel from '../models/projectModel.js';
 
 const router = express.Router();
 
