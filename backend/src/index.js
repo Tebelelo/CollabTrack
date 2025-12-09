@@ -9,9 +9,10 @@ import { supabase } from './config/database.js';
 const app = express();
 
 // For production, you should restrict the origin to your frontend's domain
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://your-frontend-domain.com']
-  : ['http://localhost:3000', 'http://127.0.0.1:3000']; // Add your dev origins
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://collabtrack-frontend-app.onrender.com."]
+    : ["http://localhost:3000", "http://127.0.0.1:3000"]; // Add your dev origins
 
 // CORS configuration
 app.use(cors({

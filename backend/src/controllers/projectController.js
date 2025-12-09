@@ -1,5 +1,5 @@
 // backend/src/controllers/projectController.js
-import * as projectModel from '../models/projectModel.js';
+import * as projectModel from '../models/projectModel.js'; // Ensuring case is correct: 'ProjectModel.js'
 import { supabase } from '../config/database.js';
 
 export const createProject = async (req, res) => {
@@ -37,6 +37,34 @@ export const createProject = async (req, res) => {
     });
   } catch (err) {
     console.error('Create project error:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getProjectMembers = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const members = await projectModel.getProjectMembers(projectId);
+    res.json(members);
+  } catch (err) {
+    console.error('Get project members error:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const addProjectMembers = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { userIds } = req.body;
+
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ error: 'User IDs must be a non-empty array.' });
+    }
+
+    const newMembers = await projectModel.addProjectMembers(projectId, userIds);
+    res.status(201).json({ message: 'Members added successfully', members: newMembers });
+  } catch (err) {
+    console.error('Add project members error:', err);
     res.status(500).json({ error: err.message });
   }
 };
