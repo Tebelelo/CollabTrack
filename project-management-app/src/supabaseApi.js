@@ -306,23 +306,23 @@ export async function deleteTask(id) {
 export async function getCommentsForTask(taskId) {
   const { data: comments, error } = await supabase
     .from('comments')
-    .select(`*, users:user_id(username)`)
-    .eq('task_id', taskId)
+    .select(`*, users:user_id(username)`) // Assuming 'user_id' is correct
+    .eq('taskId', taskId) // Changed to 'taskId' to match assumed database column name
     .order('created_at', { ascending: true });
 
   if (error) throw error;
   return comments.map(c => ({ ...c, username: c.users?.username || null }));
 }
 
-export async function createComment({ content, task_id }) {
+export async function createComment({ content, taskId }) { // Changed parameter name to taskId
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData?.user?.id;
   if (!userId) throw new Error('Not authenticated');
 
   const id = cryptoRandomUUID();
   const { data: comment, error } = await supabase
-    .from('comments')
-    .insert([{ id, content, task_id, user_id: userId, created_at: new Date().toISOString() }])
+    .from('comments') // Assuming 'user_id' is correct
+    .insert([{ id, content, taskId: taskId, user_id: userId, created_at: new Date().toISOString() }]) // Changed to 'taskId'
     .select(`*, users:user_id(username)`)
     .single();
 
