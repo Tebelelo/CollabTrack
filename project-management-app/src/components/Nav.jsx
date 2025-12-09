@@ -112,12 +112,8 @@ export default function Nav({ state = {}, dispatch = () => {} }) {
             </div>
           </>
         ) : (
-          // Show minimal header when not authenticated
-          <div className="header-right">
-            <Link to="/login" className="btn-secondary">
-              Login
-            </Link>
-          </div>
+          // When not authenticated, just show the logo without navigation or login button
+          null
         )}
       </div>
     </header>
