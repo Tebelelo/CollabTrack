@@ -1,4 +1,9 @@
 /* Landing Page Styles with Green Theme */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .landing {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
