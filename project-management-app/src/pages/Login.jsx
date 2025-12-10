@@ -10,8 +10,17 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prevForm => ({ ...prevForm, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.email || !form.password) {
+      setError('Email and password are required.');
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -56,7 +65,7 @@ export default function Login() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full p-8 bg-white rounded-2xl shadow-lg border border-green-100">
