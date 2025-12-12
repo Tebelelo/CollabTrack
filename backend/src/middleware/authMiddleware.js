@@ -1,4 +1,4 @@
-// backend/src/auth/authmiddleware.js
+
 import jwt from 'jsonwebtoken';
 import { supabase } from '../config/database.js';
 
