@@ -1,7 +1,7 @@
 // src/routes/workspaceRoutes.js
 import express from 'express';
 const router = express.Router();
-import authMiddleware from "../middleware/authmiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 import * as workspaceController from '../controllers/workspaceController.js';
 import * as projectModel from '../models/projectModel.js';
 
