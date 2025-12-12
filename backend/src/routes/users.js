@@ -3,7 +3,7 @@ import express from 'express';
 const router = express.Router();
 import { supabase } from '../config/database.js';
 import bcrypt from 'bcryptjs';
-import authMiddleware from '../middleware/authMiddleware.js';
+import authMiddleware from '../middleware/authmiddleware.js';
 import { permit } from '../middleware/roles.js';
 
 // List users (admin & pm)
