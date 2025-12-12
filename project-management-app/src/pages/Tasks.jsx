@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // CHANGE THIS TO MATCH YOUR BACKEND
-const API_BASE = 'http://localhost:4001/api';
+const API_BASE = "https://collabtrack-oruu.onrender.com/api";
 
 export default function Tasks() {
   const navigate = useNavigate();
