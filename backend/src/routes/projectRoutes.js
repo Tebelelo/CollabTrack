@@ -1,6 +1,6 @@
 // src/routes/projectsRoutes.js
 import express from 'express';
-import middleware from '../middleware/authMiddleware.js';
+import middleware from '../middleware/authmiddleware.js';
 import { permit } from '../middleware/roles.js';
 import { supabase } from '../config/database.js';
 import * as projectController from '../controllers/projectController.js';

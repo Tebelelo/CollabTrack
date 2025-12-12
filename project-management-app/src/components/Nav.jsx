@@ -160,7 +160,7 @@ export default function Nav({ state = {}, dispatch = () => {} }) {
                     My Tasks
                   </NavLink>
                   
-                  <NavLink 
+                  {/* <NavLink 
                     to="/projectBoard" 
                     className={({ isActive }) => 
                       `nav-link ${isActive ? 'active' : ''}`
@@ -176,7 +176,7 @@ export default function Nav({ state = {}, dispatch = () => {} }) {
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
                     Chat
-                  </NavLink>
+                  </NavLink> */}
                 </>
               ): isProjectManager ? (
                 // Project Manager Navigation

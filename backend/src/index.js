@@ -11,7 +11,7 @@ const app = express();
 // For production, you should restrict the origin to your frontend's domain
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://collabtrack-frontend.onrender.com"] // Removed the trailing dot
+    ? ["https://collabtrack-frontend.onrender.com"]
     : ["http://localhost:3000", "http://127.0.0.1:3000"]; // Add your dev origins
 
 // CORS configuration
@@ -29,7 +29,6 @@ import authRoutes from './routes/authRoutes.js';
 import usersRoutes from './routes/users.js';
 import projectRoutes from './routes/projectRoutes.js';
 import tasksRoutes from './routes/tasks.js';
-import commentsRoutes from './routes/comments.js';
 import workspaceRoutes from './routes/workspaceRoutes.js';
 
 
@@ -39,7 +38,6 @@ app.use('/api/users', usersRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/tasks', tasksRoutes);
-app.use('/api/comments', commentsRoutes);
 
 
 // Health check endpoint

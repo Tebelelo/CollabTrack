@@ -41,18 +41,22 @@ router.get('/user-assigned', middleware, async (req, res) => {
       .select(`
         *,
         projects(title),
-        users:assigned_to(username)
+        assigned_user:assigned_to(username),
+        creator:created_by(username, first_name, last_name)
       `)
       .eq('assigned_to', req.user.id)
       .order('due_date', { ascending: true }); // Order by due date
 
     if (error) throw error;
 
-    res.json(tasks.map(task => ({
+    const formattedTasks = tasks.map(task => ({
       ...task,
       project_title: task.projects?.title || 'N/A', // Include project title
-      assigned_username: task.users?.username || null
-    })));
+      assigned_username: task.assigned_user?.username || null,
+      created_by_name: `${task.creator.first_name || ''} ${task.creator.last_name || ''}`.trim() || task.creator.username
+    }));
+
+    res.json(formattedTasks);
   } catch (err) {
     console.error('Get user-assigned tasks error:', err);
     res.status(500).json({ error: err.message });
@@ -65,8 +69,8 @@ router.get('/:taskId/comments', middleware, async (req, res) => {
     const { taskId } = req.params;
 
     const { data: comments, error } = await supabase
-      .from('comments')
-      .select(`*, user:user_id(username, first_name, last_name)`)
+      .from('task_comments')
+      .select(`*, user:users(username, first_name, last_name)`)
       .eq('task_id', taskId)
       .order('created_at', { ascending: true });
 
@@ -83,38 +87,86 @@ router.get('/:taskId/comments', middleware, async (req, res) => {
 });
 
 // Create a comment for a task
+// Create a comment for a task
+// Create a comment for a task - UPDATED for your table structure
 router.post('/:taskId/comments', middleware, async (req, res) => {
   try {
+    console.log('POST comment route hit');
+    console.log('Task ID:', req.params.taskId);
+    console.log('Request body:', req.body);
+    console.log('User:', req.user);
+    
     const { taskId } = req.params;
     const { content } = req.body;
     const user_id = req.user.id;
-    const user_name = `${req.user.first_name} ${req.user.last_name}`;
-    const user_role = req.user.role;
-
+    
     if (!content) {
+      console.log('No content provided');
       return res.status(400).json({ error: 'Comment content is required' });
     }
-
+    
+    // First check if the task exists
+    const { data: task, error: taskError } = await supabase
+      .from('tasks')
+      .select('id')
+      .eq('id', taskId)
+      .single();
+    
+    if (taskError || !task) {
+      console.log('Task not found error:', taskError);
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    
+    console.log('Inserting comment into task_comments table...');
+    
+    // Insert only the columns that exist in your table
     const { data: comment, error } = await supabase
-      .from('comments')
+      .from('task_comments')
       .insert([
         {
           content,
           task_id: taskId,
-          user_id,
-          user_name,
-          user_role,
+          user_id: user_id,  // Only this column exists in your table
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         }
       ])
-      .select(`*, user:user_id(username, first_name, last_name)`)
+      .select('*')
       .single();
-
-    if (error) throw error;
-
+    
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return res.status(500).json({ 
+        error: 'Failed to create comment',
+        details: error.message 
+      });
+    }
+    
+    console.log('Comment inserted successfully:', comment);
+    
+    // Get user info from users table to include in response
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('username, first_name, last_name')
+      .eq('id', user_id)
+      .single();
+    
+    let user_name = 'Unknown User';
+    let username = 'Unknown';
+    
+    if (!userError && userData) {
+      user_name = `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.username;
+      username = userData.username;
+    }
+    
+    // Return the comment with user info
     res.status(201).json({
       ...comment,
-      user_name: comment.user ? `${comment.user.first_name} ${comment.user.last_name}`.trim() || comment.user.username : 'Unknown User'
+      user_name: user_name,
+      username: username,
+      user_id: user_id
     });
+    
   } catch (err) {
     console.error('Create task comment error:', err);
     res.status(500).json({ error: err.message });
@@ -155,11 +207,11 @@ router.post('/', middleware, async (req, res) => {
 
     if (error) throw error;
 
-    res.json({ 
-      id, 
-      title, 
+    res.json({
+      id,
+      title,
       message: 'Task created successfully',
-      task 
+      task
     });
   } catch (err) {
     console.error('Create task error:', err);
@@ -194,9 +246,9 @@ router.put('/:id', middleware, async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    res.json({ 
+    res.json({
       message: 'Task updated successfully',
-      task 
+      task
     });
   } catch (err) {
     console.error('Update task error:', err);
@@ -219,6 +271,73 @@ router.delete('/:id', middleware, async (req, res) => {
     res.json({ message: 'Task deleted successfully' });
   } catch (err) {
     console.error('Delete task error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update a comment
+// Get comments for a task - UPDATED
+router.get('/:taskId/comments', middleware, async (req, res) => {
+  try {
+    const { taskId } = req.params;
+
+    const { data: comments, error } = await supabase
+      .from('task_comments')
+      .select('*')
+      .eq('task_id', taskId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    // Fetch user info for each comment
+    const commentsWithUserInfo = await Promise.all(
+      comments.map(async (comment) => {
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('username, first_name, last_name')
+          .eq('id', comment.user_id)
+          .single();
+        
+        let user_name = 'Unknown User';
+        let username = 'Unknown';
+        
+        if (!userError && userData) {
+          user_name = `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.username;
+          username = userData.username;
+        }
+        
+        return {
+          ...comment,
+          user_name: user_name,
+          username: username
+        };
+      })
+    );
+
+    res.json(commentsWithUserInfo);
+  } catch (err) {
+    console.error('Get task comments error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a comment
+router.delete('/comments/:commentId', middleware, async (req, res) => {
+  const { commentId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const { error } = await supabase
+      .from('task_comments')
+      .delete()
+      .eq('id', commentId)
+      .eq('user_id', userId); // Ensures only the owner can delete
+
+    if (error) throw error;
+
+    res.json({ message: 'Comment deleted successfully' });
+  } catch (err) {
+    console.error('Delete comment error:', err);
     res.status(500).json({ error: err.message });
   }
 });

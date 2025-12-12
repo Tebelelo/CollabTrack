@@ -139,18 +139,17 @@ export default function TeamDashboard() {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/tasks`, {
+        // Use the dedicated endpoint for fetching tasks assigned to the current user
+        const res = await fetch(`${API_BASE}/tasks/user-assigned`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        if (!res.ok) throw new Error('Failed to load tasks');
+        if (!res.ok) throw new Error(`Failed to load tasks. Status: ${res.status}`);
 
-        const allTasks = await res.json();
-        const myTasks = allTasks.filter(task => task.assigned_to === currentUserId);
-
+        const myTasks = await res.json();
         const formattedTasks = myTasks.map(task => ({
           _id: task.id,
           title: task.title,
