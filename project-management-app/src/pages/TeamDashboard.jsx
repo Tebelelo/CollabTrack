@@ -17,7 +17,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 // CHANGE TO YOUR BACKEND URL
-const API_BASE = 'http://localhost:4001/api';
+const API_BASE = "https://collabtrack-oruu.onrender.com/api";
 
 const statusOptions = [
   { value: 'Backlog', label: 'Backlog', color: 'bg-gray-500' },
